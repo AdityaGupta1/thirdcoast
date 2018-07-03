@@ -52,11 +52,11 @@ public class SwerveDrive {
     Toml toml = settings.getTable(TABLE);
     boolean enableGyroLogging = toml.getBoolean("enableGyroLogging", true);
 
-    double length = toml.getDouble("length");
-    double width = toml.getDouble("width");
-    double radius = Math.hypot(length, width);
-    kLengthComponent = length / radius;
-    kWidthComponent = width / radius;
+    double length = toml.getDouble("length"); // 1.0
+    double width = toml.getDouble("width"); // 1.0
+    double radius = Math.hypot(length, width); // sqrt(2)
+    kLengthComponent = length / radius; // 1/sqrt(2)
+    kWidthComponent = width / radius; // 1/sqrt(2)
 
     if (gyro != null && gyro.isConnected()) {
       gyro.enableLogging(enableGyroLogging);
@@ -129,9 +129,10 @@ public class SwerveDrive {
       angle = Math.IEEEremainder(angle, 360.0);
 
       angle = Math.toRadians(angle);
-      final double temp = forward * Math.cos(angle) + strafe * Math.sin(angle);
+      // new forward and strafe values are adjusted to robot rotation
+      // i.e. at gyro angle of 90 degrees, with forward = 0 and strafe = 1, new forward = 1 and new strafe = 0
+      forward = forward * Math.cos(angle) + strafe * Math.sin(angle);
       strafe = -forward * Math.sin(angle) + strafe * Math.cos(angle);
-      forward = temp;
     }
 
     final double a = strafe - azimuth * kLengthComponent;
@@ -140,12 +141,14 @@ public class SwerveDrive {
     final double d = forward + azimuth * kWidthComponent;
 
     // wheel speed
+    // = the speed with which the wheel rotates forwards or backwards
     ws[0] = Math.hypot(b, d);
     ws[1] = Math.hypot(b, c);
     ws[2] = Math.hypot(a, d);
     ws[3] = Math.hypot(a, c);
 
     // wheel azimuth
+    // = the fraction of the circle to rotate (i.e. 0.25 is 90 degrees)
     wa[0] = Math.atan2(b, d) * 0.5 / Math.PI;
     wa[1] = Math.atan2(b, c) * 0.5 / Math.PI;
     wa[2] = Math.atan2(a, d) * 0.5 / Math.PI;
