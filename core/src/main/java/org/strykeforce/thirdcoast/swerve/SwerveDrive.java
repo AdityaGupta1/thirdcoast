@@ -131,8 +131,9 @@ public class SwerveDrive {
       angle = Math.toRadians(angle);
       // new forward and strafe values are adjusted to robot rotation
       // i.e. at gyro angle of 90 degrees, with forward = 0 and strafe = 1, new forward = 1 and new strafe = 0
-      forward = forward * Math.cos(angle) + strafe * Math.sin(angle);
+      final double temp = forward * Math.cos(angle) + strafe * Math.sin(angle);
       strafe = -forward * Math.sin(angle) + strafe * Math.cos(angle);
+      forward = temp;
     }
 
     final double a = strafe - azimuth * kLengthComponent;
@@ -149,7 +150,7 @@ public class SwerveDrive {
 
     // wheel azimuth
     // = the fraction of the circle to rotate (i.e. 0.25 is 90 degrees)
-    wa[0] = Math.atan2(b, d) * 0.5 / Math.PI;
+    wa[0] = Math.atan2(b, d) * 0.5 / Math.PI; // multiply by 1/2pi to get fraction instead of radians
     wa[1] = Math.atan2(b, c) * 0.5 / Math.PI;
     wa[2] = Math.atan2(a, d) * 0.5 / Math.PI;
     wa[3] = Math.atan2(a, c) * 0.5 / Math.PI;
