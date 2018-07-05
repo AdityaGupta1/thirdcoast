@@ -120,9 +120,8 @@ public class SwerveDrive {
    * @param azimuth robot rotation, from -1.0 (CCW) to 1.0 (CW)
    */
   public void drive(double forward, double strafe, double azimuth) {
-    // azimuth may not actually mean rotation in place - testing with forward = 1 and azimuth = 1 led to the robot curving to the right instead of going forward and rotating around its center
-    // testing with forward = 1, strafe = -1, and azimuth = 1 seemed to account for this, and the robot travelled mostly straight but curved somewhat to the right
-    // still need to add constant gyro readings for more accurate testing (shouldn't affect forward/strafe too much but will affect azimuth)
+    // azimuth does, in fact, mean rotation in place
+    // testing (with constant gyro readings) with forward = 1 and azimuth = 1 led to the robot driving mostly straight while also rotating
 
     // Use gyro for field-oriented drive. We use getAngle instead of getYaw to enable arbitrary
     // autonomous starting positions.
